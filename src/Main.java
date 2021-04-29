@@ -1,25 +1,51 @@
 import org.junit.Test;
 
+import javax.sound.midi.SysexMessage;
+import java.util.Scanner;
+import java.util.stream.Stream;
+
 import static org.junit.Assert.assertArrayEquals;
 
 public class Main {
 
 
+    public static void main(String[] args) {
+        int length;
 
-    @Test
-    public void positiveTest(){
-        int i = 0;
-        int[] actual = {3,4,1,2,5};
-        int[] expected = {1,2,3,4,5};
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("How many number you want to sort?");
 
-        int counter = Main.mergeSort(actual,actual.length);
-        assertArrayEquals(expected,actual);
-        System.out.println("*******"+counter);
+        try {
+            length = scanner.nextInt();
+            System.out.format("Enter %d number\n", length);
+            int[] inputArray = new int[length];
+
+            for (int i = 0; i < length; i++) {
+                inputArray[i] = scanner.nextInt();
+            }
+
+            System.out.println("it's take "  + Main.mergeSort( inputArray, inputArray.length) + " Steps to sort the Array" );
+
+        } catch (NumberFormatException e) {
+            System.out.println("Exception happened" + e);
+        }
+
     }
+
+//    @Test
+//    public void positiveTest(){
+//        int i = 0;
+//        int[] actual = {3,4,1,2,5};
+//        int[] expected = {1,2,3,4,5};
+//
+//        int counter = Main.mergeSort(actual,actual.length);
+//        assertArrayEquals(expected,actual);
+//        System.out.println("*******"+counter);
+//    }
 
     private static int mergeSort(int[] array, int length) {
         int counter = 0;
-        if (length <2) {
+        if (length < 2) {
 
             return length;
         }
@@ -28,35 +54,34 @@ public class Main {
         int[] leftArray = new int[mid];
         int[] rightArray = new int[length - mid];
 
-        for (int i = 0; i < mid ; i++) {
-            leftArray[i] = array [i] ;
+        for (int i = 0; i < mid; i++) {
+            leftArray[i] = array[i];
         }
 
-        for (int i = mid; i < length ; i++) {
-            rightArray[i - mid] = array [i];
+        for (int i = mid; i < length; i++) {
+            rightArray[i - mid] = array[i];
         }
 
-        counter += mergeSort( leftArray, mid);
-        counter += mergeSort( rightArray,length-mid);
-        counter += merge( array, leftArray, rightArray, mid, length-mid);
+        counter += mergeSort(leftArray, mid);
+        counter += mergeSort(rightArray, length - mid);
+        counter += merge(array, leftArray, rightArray, mid, length - mid);
         return counter;
     }
 
-    public static int merge(int[] array, int[] leftArray, int[] rightArray, int left, int right){
+    public static int merge(int[] array, int[] leftArray, int[] rightArray, int left, int right) {
 
-        int i = 0,  j = 0, k = 0, counter = 0;
-        while (i < left && j < right){
-            if (leftArray[i] < rightArray [j]) {
+        int i = 0, j = 0, k = 0, counter = 0;
+        while (i < left && j < right) {
+            if (leftArray[i] < rightArray[j]) {
                 array[k++] = leftArray[i++];
-                counter ++;
-            }
-            else
-                array[k++] = rightArray [j++];
+                counter++;
+            } else
+                array[k++] = rightArray[j++];
         }
-        while (i < left){
+        while (i < left) {
             array[k++] = leftArray[i++];
         }
-        while (j < right){
+        while (j < right) {
             array[k++] = rightArray[j++];
         }
         return counter;
