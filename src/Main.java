@@ -1,62 +1,92 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+import junit.framework.TestCase;
+
+
+class MergeSortTest extends TestCase {
+    private static int FIRST_ENTRY = 0;
     public static void main(String[] args) {
-        int length;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("How many number you want to sort?");
+        MergeSortTest mergesorttest = new MergeSortTest();
+//        Integer[] unsortedInt = {1, 38, 27, 110, 9, 82, 10, 100, 299, 13};
         try {
-            length = scanner.nextInt();
-            System.out.format("Enter %d number\n", length);
-            int[] inputArray = new int[length];
-
+            System.out.println("How many number you want to sort?");
+            int length = scanner.nextInt();
+            Integer[] unsortedInt = new Integer[length];
+            System.out.println("Enter the numbers: ");
             for (int i = 0; i < length; i++) {
-                inputArray[i] = scanner.nextInt();
+                int number = scanner.nextInt();
+                unsortedInt[i] = number;
             }
-            int steps = Main.mergeSort(inputArray, inputArray.length);
-            System.out.println("it's take " + steps + " Steps to sort the Array");
-        } catch (NumberFormatException e) {
-            System.out.println("Exception happened");
+            List<Integer> unsorted = Arrays.asList(unsortedInt);
+            List<Integer> sorted = mergesorttest.mergeSort(unsorted);
+            System.out.println("UnSorted List: " +unsorted.toString());
+            System.out.println("Sorted List:   " +sorted.toString());
+            int answer = mergesorttest.compare (sorted, unsorted);
+            System.out.println( answer + " Items has been moved");
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Exception happened");
         }
-
     }
-
-    private static int mergeSort(int[] array, int length) {
+    private int compare (List<Integer> sorted, List<Integer> unsorted){
         int counter = 0;
-        if (length < 2) {
-            return length;
+        for (int i = 0; i < sorted.size() ; i++) {
+            if (sorted.get(i) != unsorted.get(i)) {
+                counter++;
+            }
         }
-        int mid = length / 2;
-        int[] leftArray = new int[mid];
-        int[] rightArray = new int[length - mid];
-        for (int i = 0; i < mid; i++) {
-            leftArray[i] = array[i];
-        }
-        for (int i = mid; i < length; i++) {
-            rightArray[i - mid] = array[i];
-        }
-        counter += mergeSort(leftArray, mid);
-        counter += mergeSort(rightArray, length - mid);
-        counter += merge(array, leftArray, rightArray, mid, length - mid);
         return counter;
     }
 
-    public static int merge(int[] array, int[] leftArray, int[] rightArray, int left, int right) {
-        int i = 0, j = 0, k = 0, counter = 0;
-        while (i < left && j < right) {
-            if (leftArray[i] < rightArray[j]) {
-                array[k++] = leftArray[i++];
-                counter++;
-            } else
-                array[k++] = rightArray[j++];
+    private List<Integer> mergeSort(List<Integer> list) {
+        List<Integer> result;
+        List<Integer> left = new ArrayList<Integer>();
+        List<Integer> right = new ArrayList<Integer>();
+        int middle;
+        int counter;
+        if (list.size() <= 1) {
+            return list;
         }
-        while (i < left) {
-            array[k++] = leftArray[i++];
+        middle = list.size() / 2;
+        for (counter = 0; counter < middle; counter++) {
+            left.add(list.get(counter));
         }
-        while (j < right) {
-            array[k++] = rightArray[j++];
+
+        for (counter = middle; counter < list.size(); counter++) {
+            right.add(list.get(counter));
         }
-        return counter;
+        left = mergeSort(left);
+        right = mergeSort(right);
+        result = merge(left, right);
+        return result;
+    }
+
+    private List<Integer> merge(List<Integer> left, List<Integer> right) {
+        List<Integer> result = new ArrayList<Integer>();
+        while (!left.isEmpty() || !right.isEmpty()) {
+            if (!left.isEmpty() && !right.isEmpty()) {
+                if (left.get(FIRST_ENTRY) <= right.get(FIRST_ENTRY)) {
+                    handle(left, result);
+                } else {
+                    handle(right, result);
+                }
+            } else if (!left.isEmpty()) {
+                handle(left, result);
+            } else if (!right.isEmpty()) {
+                handle(right, result);
+            }
+        }
+        return result;
+    }
+
+    private void handle(List<Integer> list, List<Integer> result) {
+        if (!list.isEmpty()) {
+            result.add(list.get(FIRST_ENTRY));
+            list.remove(FIRST_ENTRY);
+        }
     }
 }
